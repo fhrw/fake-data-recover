@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 )
 
 func main() {
@@ -24,8 +25,6 @@ func main() {
 	currFile := 0
 
 	recoveredJpg := [][]byte{}
-
-	fmt.Println(int(fileLength) / 512)
 
 	// loop through 512byte chunks
 	for i := 0; i < int(fileLength)/512; i++ {
@@ -56,5 +55,20 @@ func main() {
 
 	}
 
-	fmt.Println(len(recoveredJpg))
+	// write each jpg to new file
+	for i, pic := range recoveredJpg {
+		// make the new jpg for writing
+		createFile, err := os.Create(strconv.Itoa(i) + ".jpg")
+		if err != nil {
+			log.Fatal("error creating a new file", err, i)
+		}
+		fmt.Println(createFile, "created new file")
+
+		// write the jpeg into the new file
+		writePic, err := createFile.Write(pic)
+		if err != nil {
+			log.Fatal("something went wrong writing this pic!")
+		}
+		_ = writePic
+	}
 }
